@@ -1,0 +1,68 @@
+// This is your Prisma schema file for Neon PostgreSQL
+// To generate: python -m prisma generate (from backend directory)
+
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// USER (Google OAuth)
+// ─────────────────────────────────────────────
+model User {
+  id          String    @id @default(cuid())
+  googleId    String    @unique
+  email       String    @unique
+  name        String
+  avatar      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  sessions    Session[]
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────
+// SESSION (Each therapy session)
+// ─────────────────────────────────────────────
+model Session {
+  id               String    @id @default(cuid())
+  userId           String
+  durationSeconds  Int
+  transcript       String    @db.Text
+  fusionLog        String?   @db.Text
+  maskingDetection String?
+  voiceEmotion     String?   @db.Text
+  blinkCount       Int       @default(0)
+  eyeContact       String?
+  createdAt        DateTime  @default(now())
+
+  user             User      @relation(fields: [userId], references: [id])
+  report           Report?
+
+  @@map("sessions")
+}
+
+// ─────────────────────────────────────────────
+// REPORT (Clinical report for a session)
+// ─────────────────────────────────────────────
+model Report {
+  id               String    @id @default(cuid())
+  sessionId        String    @unique
+  fullReportText   String    @db.Text
+  faceEmotions     Json?
+  deepFaceEmotions Json?
+  temporalSegments Json?
+  generatedAt      DateTime  @default(now())
+
+  session          Session   @relation(fields: [sessionId], references: [id])
+
+  @@map("reports")
+}

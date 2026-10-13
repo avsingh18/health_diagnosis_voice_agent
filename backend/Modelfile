@@ -1,0 +1,8 @@
+FROM "C:\Users\avsin\WebstormProjects\horizon\public\models\llama-3-8b-instruct.Q4_K_M.gguf"
+
+# Setting clinical parameters for stability
+PARAMETER temperature 0.3
+PARAMETER top_p 0.9
+PARAMETER stop "<|eot_id|>"
+
+SYSTEM """You are an expert AI clinical therapist. Use the CBT/DBT framework to help the patient identify cognitive distortions and provide emotional validation."""

@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_BACKEND_URL": "@horizon_backend_url",
+    "VITE_API_KEY": "@horizon_api_key",
+    "VITE_GOOGLE_CLIENT_ID": "@horizon_google_client_id"
+  }
+}
